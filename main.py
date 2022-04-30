@@ -1,23 +1,23 @@
+from button import Button
+from heading import TextHeading
 import pygame
 import time
 import random
-from sys import exit
 
-# Colors
-#BG = pygame.image.load("poly.png")
-
-BG = (81, 94, 115)
+pygame.init()
+# colors in rbg
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
 GREEN = (0, 255, 0)
-# Set up the screen
-WIDTH = 900
-LENGTH = 600
+BG_colour = (81, 94, 115)
 
-pygame.init()
-SCREEN = pygame.display.set_mode([WIDTH, LENGTH])
-pygame.display.set_caption("Algo Viz")
+BG = pygame.image.load("assets/poly.png")
+pygame.display.set_caption("")
+window = pygame.display.set_mode((900, 600))
+clock = pygame.time.Clock()
+icon = pygame.image.load("../SortingAlgorithmVisualizer/assets/icon32.png")
+pygame.display.set_icon(icon)
 
 arr = [255, 215, 250, 140, 460, 495, 125, 340, 85, 280, 285, 365, 260, 90, 155, 310, 480, 445, 400, 325, 15, 5, 120,
        500,
@@ -34,126 +34,145 @@ arr_sorted = sorted(arr)
 
 def visualizer(arr, j=None):
     for i in range(len(arr)):
-
         if j == i:
-            pygame.draw.rect(SCREEN, RED, ((i * 8) + 25, (SCREEN.get_height() - 10 - arr[i]), 3, arr[i] + 4))
+            pygame.draw.rect(window, RED, ((i * 8) + 25, (window.get_height() - 10 - arr[i]), 3, arr[i] + 4))
         elif arr[i] == arr_sorted[i]:
-            pygame.draw.rect(SCREEN, GREEN, ((i * 8) + 25, (SCREEN.get_height() - 10 - arr[i]), 3, arr[i] + 4))
+            pygame.draw.rect(window, GREEN, ((i * 8) + 25, (window.get_height() - 10 - arr[i]), 3, arr[i] + 4))
         else:
-            pygame.draw.rect(SCREEN, BLACK, ((i * 8) + 25, (SCREEN.get_height() - 10 - arr[i]), 3, arr[i] + 4))
-
+            pygame.draw.rect(window, BLACK, ((i * 8) + 25, (window.get_height() - 10 - arr[i]), 3, arr[i] + 4))
     pygame.display.update()
 
 
 def bubble_sort(arr):
+    pygame.display.set_caption("Bubble Sort")
+    clock.tick(60)
     visualizer(arr)
     for i in range(len(arr)):
         for j in range(len(arr) - i - 1):
-            SCREEN.fill(BG)
+            window.fill(BG_colour)
             if arr[j] > arr[j + 1]:
+                # cool python one liner
                 arr[j], arr[j + 1] = arr[j + 1], arr[j]
-                time.sleep(0.001)
                 visualizer(arr, j + 1)
                 pygame.display.update()
     visualizer(arr)
-    return arr
+    time.sleep(0.006)
+    pygame.display.set_caption("")
 
 
 def insertion_sort(arr):
+    pygame.display.set_caption("Insertion Sort")
     visualizer(arr)
-    # Traverse through 1 to len(arr)
     for i in range(1, len(arr)):
         key = arr[i]
         j = i - 1
         while j >= 0 and key < arr[j]:
-            SCREEN.fill(BG)
+            window.fill(BG_colour)
             arr[j + 1] = arr[j]
-            time.sleep(0.001)
+            time.sleep(0.002)
             visualizer(arr, j + 1)
             j -= 1
         arr[j + 1] = key
-    SCREEN.fill(BG)
+    window.fill(BG_colour)
     visualizer(arr)
     pygame.display.update()
+    time.sleep(0.18)
+    pygame.display.set_caption("")
 
 
-def selectionSort(array):
-    size = len(array)
-    for step in range(size):
-        min_idx = step
-        for i in range(step + 1, size):
+def selection_sort(arr):
+    pygame.display.set_caption("Selection Sort")
+    for i in range(len(arr)):
+        min_idx = i
+        for j in range(i + 1, len(arr)):
             time.sleep(0.001)
-            SCREEN.fill(BG)
-            visualizer(arr, j=i)
-            # to sort in descending order, change > to < in this line
-            # select the minimum element in each loop
-            if array[i] < array[min_idx]:
-                min_idx = i
-            if array == sorted(array):
-                return
-        (array[step], array[min_idx]) = (array[min_idx], array[step])
+            window.fill(BG_colour)
+            visualizer(arr, j=j)
+            if arr[j] < arr[min_idx]:
+                min_idx = j
+        (arr[i], arr[min_idx]) = (arr[min_idx], arr[i])
+        if arr == arr_sorted:
+            time.sleep(0.0045)
+            pygame.display.set_caption("")
+            return
 
 
-def cocktailSort(a):
-    n = len(a)
+def cocktail_sort(arr):
+    pygame.display.set_caption("Cocktail Sort")
+    size = len(arr)
     swapped = True
     start = 0
-    end = n - 1
+    end = size - 1
     visualizer(arr)
-    while (swapped == True):
-
-        # reset the swapped flag on entering the loop,
-        # because it might be true from a previous
-        # iteration.
+    while swapped:
         swapped = False
-
-        # loop from left to right same as the bubble
-        # sort
         for i in range(start, end):
-            if a[i] > a[i + 1]:
-                a[i], a[i + 1] = a[i + 1], a[i]
+            if arr[i] > arr[i + 1]:
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
                 time.sleep(0.001)
-                SCREEN.fill(BG)
+                window.fill(BG_colour)
                 visualizer(arr, j=i)
                 swapped = True
-
-        # if nothing moved, then array is sorted.
-        if swapped == False:
+        if not swapped:
             break
-
-        # otherwise, reset the swapped flag so that it
-        # can be used in the next stage
         swapped = False
-
-        # move the end point back by one, because
-        # item at the end is in its rightful spot
         end = end - 1
-
-        # from right to left, doing the same
-        # comparison as in the previous stage
         for i in range(end - 1, start - 1, -1):
-            if a[i] > a[i + 1]:
-                a[i], a[i + 1] = a[i + 1], a[i]
+            if arr[i] > arr[i + 1]:
+                arr[i], arr[i + 1] = arr[i + 1], arr[i]
+                time.sleep(0.001)
                 swapped = True
-
-        # increase the starting point, because
-        # the last stage would have moved the next
-        # smallest number to its rightful spot.
         start = start + 1
+    time.sleep(0.18)
+    pygame.display.set_caption("")
+
+# main loop
+def main_menu():
+    run = True
+    viz_head = TextHeading("Algo Visualizer", 70, 240, 20, 440, 100, (69, 73, 125))
+    bubble_sort_button = Button((67, 135, 187), 345, 200, 235, 60, 45, 'Bubble Sort')
+    selection_sort_button = Button((67, 135, 187), 345, 275, 235, 60, 45, 'Selection Sort')
+    insertion_sort_button = Button((67, 135, 187), 345, 350, 235, 60, 45, 'Insertion Sort')
+    cocktail_sort_button = Button((67, 135, 187), 345, 425, 235, 60, 45, 'Cocktail Sort')
+
+    while run:
+        clock.tick(30)
+        window.blit(BG, (0, 0))
+        bubble_sort_button.draw_button(window, BLACK)
+        selection_sort_button.draw_button(window, BLACK)
+        insertion_sort_button.draw_button(window, BLACK)
+        cocktail_sort_button.draw_button(window, BLACK)
+        viz_head.draw_text_box(window)
+        pygame.display.update()
+        for event in pygame.event.get():
+            mouse_pos = pygame.mouse.get_pos()
+
+            if event.type == pygame.QUIT:
+                run = False
+                pygame.quit()
+                quit()
+
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                # reshuffles array for every button press
+                random.shuffle(arr)
+                if bubble_sort_button.is_above(mouse_pos):
+                    bubble_sort(arr)
+                elif selection_sort_button.is_above(mouse_pos):
+                    selection_sort(arr)
+                elif insertion_sort_button.is_above(mouse_pos):
+                    insertion_sort(arr)
+                elif cocktail_sort_button.is_above(mouse_pos):
+                    cocktail_sort(arr)
+
+            if event.type == pygame.MOUSEMOTION:
+                bubble_sort_button.color = (4, 60, 89) if bubble_sort_button.is_above(mouse_pos) else (67, 135, 187)
+                selection_sort_button.color = (4, 60, 89) if selection_sort_button.is_above(mouse_pos) else (
+                67, 135, 187)
+                insertion_sort_button.color = (4, 60, 89) if insertion_sort_button.is_above(mouse_pos) else (
+                67, 135, 187)
+                cocktail_sort_button.color = (4, 60, 89) if cocktail_sort_button.is_above(mouse_pos) else (67, 135, 187)
 
 
-SCREEN.fill(BG)
-running = True
-while running:
-    # cocktailSort(arr)
-    #selectionSort(arr)
-    # insertion_sort(arr)
-    bubble_sort(arr)
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            exit()
-
-    pygame.display.update()
-
-pygame.quit()
+# starts execution of program
+if __name__ == "__main__":
+    main_menu()
